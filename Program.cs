@@ -9,3 +9,4 @@ Si consideri la possibilità di poter verificare la bontà del prototipo eseguen
 6 - cancellare un prodotto su cui è attivo almeno un ordine
  
  */
+Console.WriteLine("ciao");

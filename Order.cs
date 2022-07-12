@@ -12,7 +12,7 @@ public class Order
     [Key]
     public int OrderID { get; set; }    
 
-    public DateOnly Date { get; set; }
+    public string Date { get; set; }
 
     public double Amount { get; set; }
 
