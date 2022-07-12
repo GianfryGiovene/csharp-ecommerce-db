@@ -73,7 +73,7 @@ switch (userInput)
                     if(userInput == product.Id)
                     {
                         productsList.Add(product);
-                        Console.Write("Aggiunto");
+                        Console.WriteLine("Aggiunto");
                         break;
                     }
                     
@@ -100,21 +100,6 @@ switch (userInput)
                 }
             }
 
-            
-
-
-
-            //Console.WriteLine("**** MENU AGGIUNGI UTENTE ****");
-            //Console.WriteLine("Inserire nome cliente: ");
-            //string customerName = Console.ReadLine();
-
-            //Console.WriteLine("Inserire email cliente: ");
-            //string customerEmail = Console.ReadLine();
-
-            //Customer newCustomer = new Customer(customerName, customerEmail);
-
-            //db.Add(newCustomer);
-            //db.SaveChanges();
         }
 
         break;
