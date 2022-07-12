@@ -23,6 +23,23 @@ public class Order
     public Customer Customer { get; set; }
 
     public List<QuantityProduct> QuantityProduct { get; set; }
+
+
+    public Order( Customer customer, List<Product> products)
+    {
+        this.Customer = customer;
+        this.CustomerID = customer.CustomerID;
+        this.Status = true;
+        foreach(Product product in products)
+        {
+            this.Amount += product.Price;
+        }
+    }
+
+    public Order()
+    {
+
+    }
 }
 
 

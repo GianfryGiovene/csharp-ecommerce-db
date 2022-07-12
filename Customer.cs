@@ -21,9 +21,10 @@ public class Customer
 
     public List<QuantityProduct> QuantityProduct { get; set; }
 
-    public Customer(string customerName)
+    public Customer(string customerName, string email)
     {
         this.CustomerName = customerName;
+        this.Email = email;
     }
 
 }
