@@ -14,6 +14,7 @@ Console.WriteLine("Scegliere cosa si vuole fare");
 Console.WriteLine("1- Inserire prodotti");
 Console.WriteLine("2- Registrazione utente");
 Console.WriteLine("3- Menu ordini");
+Console.WriteLine("4- Menu recupera lista ordini di un cliente");
 
 int userInput = Int32.Parse(Console.ReadLine());
 
@@ -103,5 +104,28 @@ switch (userInput)
         }
 
         break;
-        
+    case 4:
+        using (EcommerceContext db = new EcommerceContext())
+        {
+            Console.WriteLine("Inserire nome utente per il quale si vogliono cercare gli ordini: ");
+            string inputName = Console.ReadLine();
+            List<Customer> customerList = db.Customers.ToList<Customer>();
+            List<Order> ordersList = db.Orders.ToList<Order>();
+            c
+            foreach (Customer customer in customerList)
+            {
+                if(inputName == customer.CustomerName)
+                {
+                    Console.WriteLine("Ecco la lista degli ordini effettuata dal cliente");
+                    List<Order> customerOrders = db.Orders.Where(order => order.CustomerID == customer.CustomerID).ToList<Order>(); ;
+                    foreach (Order order in customerOrders)
+                    {
+                        Console.WriteLine("ID ordine: {0}\tSomma totale ordine: {1}euro",order.OrderID,order.Amount);
+                    }
+                }
+            }
+            
+
+        }
+        break;
 }
