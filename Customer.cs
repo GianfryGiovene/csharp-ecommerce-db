@@ -21,5 +21,10 @@ public class Customer
 
     public List<QuantityProduct> QuantityProduct { get; set; }
 
+    public Customer(string customerName)
+    {
+        this.CustomerName = customerName;
+    }
+
 }
 
