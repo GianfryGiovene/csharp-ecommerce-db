@@ -53,7 +53,7 @@ public class Order
 
     public void ChangeStatus()
     {
-        this.Status = true;f
+        this.Status = true;
     }
 }
 

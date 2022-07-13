@@ -5,8 +5,8 @@ Si consideri la possibilità di poter verificare la bontà del prototipo eseguen
 1 - inserire almeno 3 prodotti diversi
 2 - inserire almeno 5 ordini su almeno 2 utenti diversi
 3 - recuperare la lista di tutti gli ordini effettuati da un cliente
-
 4 - modificare l’ordine di un cliente
+
 5 - cancellare un ordine di un cliente
 6 - cancellare un prodotto su cui è attivo almeno un ordine
  
@@ -162,13 +162,18 @@ switch (userInput)
             {
                 if (userInput == order.OrderID)
                 {
-                    Console.WriteLine("Si vuole impostare come ordine spedito?\n1 - si\n2 - no");
+                    Console.WriteLine("Selezionare cosa si vuole fare:\n1 - settare un ordine come spedito\n2 - eliminare un'ordine");
                     userInput = Int32.Parse(Console.ReadLine());
-                    if(userInput == 1)
+                    switch(userInput)
                     {
-
-                        order.ChangeStatus();
-                        db.SaveChanges();
+                        case 1:
+                            order.ChangeStatus();
+                            db.SaveChanges();
+                            break;
+                        case 2:
+                            db.Remove(order);
+                            db.SaveChanges();
+                            break;
 
                     }
                     
