@@ -14,16 +14,17 @@ public class Customer
 
     public string CustomerName { get; set; }
 
+    public string CustomerSurname { get; set; }
+
     [Column("customer_email")]
     public string Email { get; set; }
 
     public List<Order> Order { get; set; }
 
-    public List<QuantityProduct> QuantityProduct { get; set; }
-
-    public Customer(string customerName, string email)
+    public Customer(string customerName, string customerSurname, string email)
     {
         this.CustomerName = customerName;
+        this.CustomerSurname = customerSurname;
         this.Email = email;
     }
 

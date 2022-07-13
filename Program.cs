@@ -15,6 +15,8 @@ Console.WriteLine("1- Inserire prodotti");
 Console.WriteLine("2- Registrazione utente");
 Console.WriteLine("3- Menu ordini");
 Console.WriteLine("4- Menu recupera lista ordini di un cliente");
+Console.WriteLine("5- Menu modifica ordini di un cliente");
+
 
 int userInput = Int32.Parse(Console.ReadLine());
 
@@ -27,10 +29,13 @@ switch (userInput)
             Console.WriteLine("Inserire nome prodotto: ");
             string productName = Console.ReadLine();
 
+            Console.WriteLine("Inserire descrizione prodotto: ");
+            string productDescription = Console.ReadLine();
+
             Console.WriteLine("Inserire prezzo prodotto in euro: ");
             double productPrice = double.Parse(Console.ReadLine());
             
-            Product newProduct = new Product(productName, productPrice);
+            Product newProduct = new Product(productName, productDescription, productPrice);
 
             db.Add(newProduct);
             db.SaveChanges();
@@ -44,10 +49,13 @@ switch (userInput)
             Console.WriteLine("Inserire nome: ");
             string customerName = Console.ReadLine();
 
+            Console.WriteLine("Inserire nome: ");
+            string customerSurname = Console.ReadLine();
+
             Console.WriteLine("Inserire email: ");
             string customerEmail = Console.ReadLine();
 
-            Customer newCustomer = new Customer(customerName, customerEmail);
+            Customer newCustomer = new Customer(customerName,customerSurname, customerEmail);
 
             db.Add(newCustomer);
             db.SaveChanges();
@@ -55,29 +63,38 @@ switch (userInput)
         break;
 
     case 3:
-                
+
         using (EcommerceContext db = new EcommerceContext())
         {
             Console.WriteLine("Lista prodotti");
             List<Product> products = db.Products.OrderBy(product => product.Name).ToList<Product>();
-            foreach(Product product in products)
+
+            foreach (Product product in products)
             {
-                Console.WriteLine(product.Id.ToString() +" " + product.Name);
+                Console.WriteLine(product.Id.ToString() + " " + product.Name);
             }
             Console.WriteLine("Selezionare cosa si vuole acquistare fino a che non digiti '0' per essere pronto all'acquisto");
-            List<Product> productsList = new List<Product>();
-            while(userInput != 0 )
+
+            List<Product> productsCart = new List<Product>();
+            List<QuantityProduct> quantityProducts = new List<QuantityProduct>();
+
+            while (userInput != 0)
             {
                 userInput = Int32.Parse(Console.ReadLine());
+
                 foreach (Product product in products)
                 {
-                    if(userInput == product.Id)
+                    if (userInput == product.Id)
                     {
-                        productsList.Add(product);
+                        Console.Write("Indicare la quantità:");
+                        userInput = Int32.Parse(Console.ReadLine());
+                        QuantityProduct productQta = new QuantityProduct(userInput, product);
+                        productsCart.Add(product);
+                        quantityProducts.Add(productQta);
                         Console.WriteLine("Aggiunto");
                         break;
                     }
-                    
+
                 }
 
             }
@@ -89,43 +106,128 @@ switch (userInput)
 
             Console.WriteLine("Inserire email: ");
             string customerEmail = Console.ReadLine();
-            List<Customer> customerList = db.Customers.ToList<Customer>();
-            
-            foreach(Customer customer in customerList)
-            {
-                if(customer.Email == customerEmail && customer.CustomerName == customerName)
-                {
-                    Order newOrder = new Order(customer, productsList);
-                    db.Add(newOrder);
-                    db.SaveChanges();
-                }
-            }
 
-        }
-
-        break;
-    case 4:
-        using (EcommerceContext db = new EcommerceContext())
-        {
-            Console.WriteLine("Inserire nome utente per il quale si vogliono cercare gli ordini: ");
-            string inputName = Console.ReadLine();
             List<Customer> customerList = db.Customers.ToList<Customer>();
-            List<Order> ordersList = db.Orders.ToList<Order>();
-            c
+
             foreach (Customer customer in customerList)
             {
-                if(inputName == customer.CustomerName)
+                if (customer.Email == customerEmail && customer.CustomerName == customerName)
                 {
-                    Console.WriteLine("Ecco la lista degli ordini effettuata dal cliente");
-                    List<Order> customerOrders = db.Orders.Where(order => order.CustomerID == customer.CustomerID).ToList<Order>(); ;
-                    foreach (Order order in customerOrders)
+                    Order newOrder = new Order(customer, productsCart);
+                    db.Orders.Add(newOrder);
+                    db.SaveChanges();
+                    foreach (QuantityProduct item in quantityProducts)
                     {
-                        Console.WriteLine("ID ordine: {0}\tSomma totale ordine: {1}euro",order.OrderID,order.Amount);
+                        item.OrderID = newOrder.OrderID;
+                        db.QuantitiesProducts.Add(item);
+                        db.SaveChanges();
                     }
-                }
-            }
-            
 
+                }
+
+            }
         }
         break;
+    case 4:
+        List<Order> customerOrders = FindCustomerOrders();
+        foreach (Order order in customerOrders)
+        {
+            Console.WriteLine("ID ordine: {0}\tSomma totale ordine: {1}euro", order.OrderID, order.Amount);
+        }
+        break;
+
+    case 5:
+
+        using (EcommerceContext db = new EcommerceContext())
+        {
+            List<Order> customerOrdersToModified = FindCustomerOrders();
+            foreach (Order order in customerOrdersToModified)
+            {
+                Console.WriteLine("ID ordine: {0}\tSomma totale ordine: {1}euro", order.OrderID, order.Amount);
+            }
+            Console.Write("Selezionare quale ordine modificare: ");
+            userInput = Int32.Parse(Console.ReadLine());
+
+            foreach(Order order in customerOrdersToModified)
+            {
+                if(userInput == order.OrderID)
+                {
+                    List<Product> productsToAdd = InsertProductsToCart(db);
+                    order.AddProducts(productsToAdd);
+
+                    db.SaveChanges();
+                }
+            } 
+        }
+            break;
+
+}
+
+
+List<Order> FindCustomerOrders()
+{
+    using (EcommerceContext db = new EcommerceContext())
+    {
+        Console.WriteLine("Inserire nome utente per il quale si vogliono cercare gli ordini: ");
+        string inputName = Console.ReadLine();
+        List<Customer> customerList = db.Customers.ToList<Customer>();
+        List<Order> ordersList = db.Orders.ToList<Order>();
+
+        foreach (Customer customer in customerList)
+        {
+            if (inputName == customer.CustomerName)
+            {
+                Console.WriteLine("Ecco la lista degli ordini effettuata dal cliente");
+                List<Order> customerOrders = db.Orders.Where(order => order.CustomerID == customer.CustomerID).ToList<Order>(); ;
+                
+                return customerOrders;
+            }
+
+        }
+        return null;
+
+    }
+}
+
+List<Product> InsertProductsToCart(EcommerceContext db)
+{
+    Console.WriteLine("Aggiungi nuovi prodotti all'ordine");
+
+    Console.WriteLine("Lista prodotti");
+    List<Product> products = db.Products.OrderBy(product => product.Name).ToList<Product>();
+    foreach (Product product in products)
+    {
+        Console.WriteLine(product.Id.ToString() + " " + product.Name);
+    }
+    Console.WriteLine("Selezionare cosa si vuole acquistare fino a che non digiti '0' per essere pronto all'acquisto");
+    List<Product> productsList = new List<Product>();
+    while (userInput != 0)
+    {
+        userInput = Int32.Parse(Console.ReadLine());
+        foreach (Product product in products)
+        {
+            if (userInput == product.Id)
+            {
+                productsList.Add(product);
+                Console.WriteLine("Aggiunto");
+                break;
+            }
+
+        }
+
+    }
+    return productsList;
+   
+}
+
+
+void SetProductQuantity(List<QuantityProduct> quantityProduct, Order order, EcommerceContext db)
+{
+
+    foreach(QuantityProduct item in quantityProduct)
+    {
+        item.OrderID = order.OrderID;
+        db.QuantitiesProducts.Add(item);
+        db.SaveChanges();
+    }
 }

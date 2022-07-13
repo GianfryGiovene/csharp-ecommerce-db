@@ -12,7 +12,7 @@ public class Order
     [Key]
     public int OrderID { get; set; }    
 
-    public string Date { get; set; }
+    public DateTime Date { get; set; }
 
     public double Amount { get; set; }
 
@@ -39,6 +39,15 @@ public class Order
     public Order()
     {
 
+    }
+
+
+    public void AddProducts(List<Product> products)
+    {
+        foreach (Product product in products)
+        {
+            this.Amount += product.Price;
+        }
     }
 }
 

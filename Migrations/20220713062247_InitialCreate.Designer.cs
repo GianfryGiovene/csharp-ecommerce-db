@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce_db.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    [Migration("20220712135559_InitialCreate")]
+    [Migration("20220713062247_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,10 @@ namespace Ecommerce_db.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerID"), 1L, 1);
 
                     b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerSurname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -59,9 +63,8 @@ namespace Ecommerce_db.Migrations
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
 
-                    b.Property<string>("Date")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
@@ -80,6 +83,10 @@ namespace Ecommerce_db.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -101,18 +108,16 @@ namespace Ecommerce_db.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuantityProductID"), 1L, 1);
 
-                    b.Property<int?>("CustomerID")
-                        .HasColumnType("int");
-
                     b.Property<int>("OrderID")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductID")
                         .HasColumnType("int");
 
-                    b.HasKey("QuantityProductID");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-                    b.HasIndex("CustomerID");
+                    b.HasKey("QuantityProductID");
 
                     b.HasIndex("OrderID");
 
@@ -134,10 +139,6 @@ namespace Ecommerce_db.Migrations
 
             modelBuilder.Entity("QuantityProduct", b =>
                 {
-                    b.HasOne("Customer", null)
-                        .WithMany("QuantityProduct")
-                        .HasForeignKey("CustomerID");
-
                     b.HasOne("Order", "Order")
                         .WithMany("QuantityProduct")
                         .HasForeignKey("OrderID")
@@ -145,7 +146,7 @@ namespace Ecommerce_db.Migrations
                         .IsRequired();
 
                     b.HasOne("Product", "Product")
-                        .WithMany()
+                        .WithMany("QuantityProducts")
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -158,13 +159,16 @@ namespace Ecommerce_db.Migrations
             modelBuilder.Entity("Customer", b =>
                 {
                     b.Navigation("Order");
-
-                    b.Navigation("QuantityProduct");
                 });
 
             modelBuilder.Entity("Order", b =>
                 {
                     b.Navigation("QuantityProduct");
+                });
+
+            modelBuilder.Entity("Product", b =>
+                {
+                    b.Navigation("QuantityProducts");
                 });
 #pragma warning restore 612, 618
         }

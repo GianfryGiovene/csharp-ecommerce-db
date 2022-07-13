@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,6 +16,7 @@ namespace Ecommerce_db.Migrations
                     CustomerID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerSurname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     customer_email = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -29,6 +31,7 @@ namespace Ecommerce_db.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
@@ -42,7 +45,7 @@ namespace Ecommerce_db.Migrations
                 {
                     OrderID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     CustomerID = table.Column<int>(type: "int", nullable: false)
@@ -64,18 +67,13 @@ namespace Ecommerce_db.Migrations
                 {
                     QuantityProductID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
                     OrderID = table.Column<int>(type: "int", nullable: false),
-                    ProductID = table.Column<int>(type: "int", nullable: false),
-                    CustomerID = table.Column<int>(type: "int", nullable: true)
+                    ProductID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_quantity_product", x => x.QuantityProductID);
-                    table.ForeignKey(
-                        name: "FK_quantity_product_customer_CustomerID",
-                        column: x => x.CustomerID,
-                        principalTable: "customer",
-                        principalColumn: "CustomerID");
                     table.ForeignKey(
                         name: "FK_quantity_product_order_OrderID",
                         column: x => x.OrderID,
@@ -93,11 +91,6 @@ namespace Ecommerce_db.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_order_CustomerID",
                 table: "order",
-                column: "CustomerID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_quantity_product_CustomerID",
-                table: "quantity_product",
                 column: "CustomerID");
 
             migrationBuilder.CreateIndex(
