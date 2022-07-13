@@ -29,7 +29,7 @@ public class Order
     {
         this.Customer = customer;
         this.CustomerID = customer.CustomerID;
-        this.Status = true;
+        this.Status = false;
         foreach(Product product in products)
         {
             this.Amount += product.Price;
@@ -47,7 +47,13 @@ public class Order
         foreach (Product product in products)
         {
             this.Amount += product.Price;
-        }
+            
+        }       
+    }
+
+    public void ChangeStatus()
+    {
+        this.Status = true;f
     }
 }
 
